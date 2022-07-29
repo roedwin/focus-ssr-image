@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  welcome:
+    build: 
+      context: ./
+    ports:
+      - 7000:7000
+
+  postgres:
+    image: postgres:12.3-alpine
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./docker/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: postgres
+      POSTGRES_DB: pg
+
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+
+  nginx:
+    image: nginx:latest
+    container_name: webserver
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+  
